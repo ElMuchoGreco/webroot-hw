@@ -1,5 +1,5 @@
 export const MIN_ARTICLE_LENGTH = 200;
-export const MAX_ARTICLE_LENGTH = 20_000;
+export const MAX_ARTICLE_LENGTH = 30_000;
 
 export type InputValidationResult =
   | { ok: true; text: string }

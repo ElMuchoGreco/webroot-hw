@@ -1,6 +1,15 @@
 import { z } from "zod";
 
-const stringArray = () => z.array(z.string().trim().min(1)).catch([]);
+const stringArray = () =>
+  z
+    .array(z.unknown())
+    .transform((items) =>
+      items
+        .filter((item): item is string => typeof item === "string")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+    )
+    .catch([]);
 
 export const entitiesSchema = z
   .object({
@@ -24,4 +33,3 @@ export const articleBriefingSchema = z.object({
 });
 
 export type ArticleBriefing = z.infer<typeof articleBriefingSchema>;
-export type Entities = z.infer<typeof entitiesSchema>;

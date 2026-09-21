@@ -97,12 +97,33 @@ describe("articleBriefingSchema", () => {
   it("filters out blank strings inside list fields rather than failing the whole response", () => {
     const result = articleBriefingSchema.safeParse({
       ...validBriefing,
-      keyPoints: ["Valid point", ""],
+      keyPoints: ["Valid point", "", "Another point"],
     });
     expect(result.success).toBe(true);
     if (result.success) {
-      // the array as a whole is invalid (blank entry), so it falls back to []
-      expect(result.data.keyPoints).toEqual([]);
+      expect(result.data.keyPoints).toEqual(["Valid point", "Another point"]);
+    }
+  });
+
+  it("trims whitespace from list entries", () => {
+    const result = articleBriefingSchema.safeParse({
+      ...validBriefing,
+      keyPoints: ["  Padded point  "],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keyPoints).toEqual(["Padded point"]);
+    }
+  });
+
+  it("filters out non-string entries inside list fields", () => {
+    const result = articleBriefingSchema.safeParse({
+      ...validBriefing,
+      keyPoints: ["Valid point", 42, null],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.keyPoints).toEqual(["Valid point"]);
     }
   });
 });
